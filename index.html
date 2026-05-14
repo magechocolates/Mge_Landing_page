@@ -76,7 +76,6 @@
       position: absolute;
       border-radius: 50%;
       pointer-events: none;
-      will-change: transform, opacity;
     }
 
     /* ── 6 warm saffron blobs + 2 dark bordeaux masses ────────────────────────── */
@@ -587,7 +586,7 @@
     @media (max-width: 768px) {
       .spells-container  { flex-direction: column; gap: 16px; padding: 0 16px 40px 16px; }
       .spell-panel       { min-height: auto; padding-bottom: 40px; }
-      .spell-canvas      { opacity: 1; }
+      .spell-canvas      { opacity: 0; }
     }
 
     /* ── Testimonial card ───────────────────────────────── */
@@ -717,6 +716,34 @@
     @media (max-width: 768px) {
       .testi-grid { grid-template-columns: 1fr; gap: 16px; }
     }
+
+    /* ── Mobile: hide blobs — blur filters are the main jitter source ── */
+    @media (max-width: 768px) {
+      #lava-a, #lava-b, #lava-c, #lava-d,
+      #lava-e, #lava-f, #lava-g, #lava-h {
+        display: none;
+      }
+    }
+
+    /* ── Desktop: promote blobs to their own compositor layer ── */
+    @media (min-width: 769px) {
+      #lava-a, #lava-b, #lava-c, #lava-d,
+      #lava-e, #lava-f, #lava-g, #lava-h {
+        will-change: transform, opacity;
+      }
+    }
+
+    /* ── Reduced motion — respect accessibility settings ── */
+    @media (prefers-reduced-motion: reduce) {
+      #lava-a, #lava-b, #lava-c, #lava-d,
+      #lava-e, #lava-f, #lava-g, #lava-h {
+        animation: none;
+      }
+      * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 
@@ -789,7 +816,7 @@
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 1px 0 rgba(0,0,0,0.06);
   ">
-    <img id="nav-logo" src="brand_assets/Band logo_red.png" alt="MAGE" />
+    <img id="nav-logo" src="brand_assets/Band logo_red.png" alt="MAGE" loading="lazy" />
   </nav>
 
   <!-- ══════════════════════════════════════════════════════
@@ -904,7 +931,7 @@
           <div class="spell-header" style="background: #FF9115;">
             <span class="spell-header-name">NoNap Spell</span>
           </div>
-          <img src="brand_assets/Mascot_no nap spell.png" class="spell-mascot" alt="NoNap Spell mascot" />
+          <img src="brand_assets/Mascot_no nap spell.png" class="spell-mascot" alt="NoNap Spell mascot" loading="lazy" />
           <p class="spell-tagline" style="color: #FF9115;">Stay sharp. No crash.</p>
           <p class="spell-desc">For back-to-back classes, late deadlines, and days that refuse to end. Focus without the jitter. Alertness without the crash that follows.</p>
           <span class="spell-number" style="color: #FF9115;" aria-hidden="true">01</span>
@@ -916,7 +943,7 @@
           <div class="spell-header" style="background: #F92445;">
             <span class="spell-header-name">Relief Spell</span>
           </div>
-          <img src="brand_assets/Mascot_relief spell.png" class="spell-mascot" alt="Relief Spell mascot" />
+          <img src="brand_assets/Mascot_relief spell.png" class="spell-mascot" alt="Relief Spell mascot" loading="lazy" />
           <p class="spell-tagline" style="color: #F92445;">Ease the day. Feel yourself.</p>
           <p class="spell-desc">For the days your body works against you. Periods, PMS, PCOS - formulated to reduce discomfort and help.</p>
           <span class="spell-number" style="color: #F92445;" aria-hidden="true">02</span>
@@ -928,7 +955,7 @@
           <div class="spell-header" style="background: #730314;">
             <span class="spell-header-name">Power Spell</span>
           </div>
-          <img src="brand_assets/Mascot_power spell.png" class="spell-mascot" alt="Power Spell mascot" />
+          <img src="brand_assets/Mascot_power spell.png" class="spell-mascot" alt="Power Spell mascot" loading="lazy" />
           <p class="spell-tagline" style="color: #730314;">Energy that earns it.</p>
           <p class="spell-desc">Built for the training sessions, the early mornings, the second sets. Clean energy, better endurance. No synthetic rush - just performance.</p>
           <span class="spell-number" style="color: #730314;" aria-hidden="true">03</span>
@@ -940,7 +967,7 @@
           <div class="spell-header" style="background: #1a5f5a;">
             <span class="spell-header-name">Calm Spell</span>
           </div>
-          <img src="brand_assets/Mascot_calm spell.png" class="spell-mascot" alt="Calm Spell mascot" />
+          <img src="brand_assets/Mascot_calm spell.png" class="spell-mascot" alt="Calm Spell mascot" loading="lazy" />
           <p class="spell-tagline" style="color: #1a5f5a;">Wind down. Sleep deep.</p>
           <p class="spell-desc">For the nights your mind won't stop. Quiets the noise, eases the tension, and gets you into the kind of rest that actually recovers you.</p>
           <span class="spell-number" style="color: #1a5f5a;" aria-hidden="true">04</span>
@@ -1196,6 +1223,7 @@
         src="brand_assets/Brand logo_white.png"
         alt="MAGE Functional Chocolates"
         style="width: 140px; margin-bottom: 28px; opacity: 0.92; display: block; margin-left: auto; margin-right: auto;"
+        loading="lazy"
       />
       <p style="
         font-family: 'Lora', Georgia, serif;
@@ -1408,15 +1436,15 @@
         if (t > 0.75) return ((1 - t) / 0.25) * max;
         return max;
       }
-      var isMobile = function () { return window.innerWidth <= 768; };
-
-      // Generic panel factory
+      // Generic panel factory — returns { stopLoop }
       function makePanel(panelId, canvasId, MAX, spawnFn, updateFn, drawFn) {
         var panel  = document.getElementById(panelId);
         var canvas = document.getElementById(canvasId);
-        if (!panel || !canvas) return;
+        if (!panel || !canvas) return { stopLoop: function(){} };
         var ctx = canvas.getContext('2d');
-        var particles = [], running = false, isHovered = false;
+        var particles = [], animFrameId = null, isSpawning = false;
+
+        if (window.innerWidth < 768) { MAX = Math.floor(MAX / 2); }
 
         function resize() {
           canvas.width  = panel.offsetWidth;
@@ -1425,9 +1453,9 @@
         resize();
         window.addEventListener('resize', resize);
 
-        function loop() {
+        function drawFrame() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          if (isHovered && particles.length < MAX) {
+          if (isSpawning && particles.length < MAX) {
             particles.push(spawnFn(canvas));
           }
           var alive = [];
@@ -1435,25 +1463,62 @@
             var p = particles[i];
             p.life++;
             updateFn(p);
-            if (p.life < p.maxLife) {
-              drawFn(ctx, p);
-              alive.push(p);
-            }
+            if (p.life < p.maxLife) { drawFn(ctx, p); alive.push(p); }
           }
           particles = alive;
-          if (!isHovered && particles.length === 0) { running = false; return; }
-          requestAnimationFrame(loop);
         }
 
-        function start() { if (!running) { running = true; loop(); } }
+        function startLoop() {
+          if (animFrameId) return;
+          isSpawning = true;
+          function loop() {
+            drawFrame();
+            if (!isSpawning && particles.length === 0) { animFrameId = null; return; }
+            animFrameId = requestAnimationFrame(loop);
+          }
+          animFrameId = requestAnimationFrame(loop);
+        }
 
-        if (isMobile()) { isHovered = true; start(); return; }
-        panel.addEventListener('mouseenter', function () { isHovered = true; start(); });
-        panel.addEventListener('mouseleave', function () { isHovered = false; });
+        function stopLoop() {
+          isSpawning = false;
+          if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+          particles = [];
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Desktop: hover starts / leaves stops
+        panel.addEventListener('mouseenter', function () {
+          if (window.innerWidth >= 768) startLoop();
+        });
+        panel.addEventListener('mouseleave', function () {
+          if (window.innerWidth >= 768) stopLoop();
+        });
+
+        // Mobile: tap to start, 3 s auto-stop
+        var mobileTimer = null;
+        panel.addEventListener('click', function () {
+          if (window.innerWidth >= 768) return;
+          if (animFrameId) {
+            clearTimeout(mobileTimer);
+            stopLoop();
+            canvas.style.opacity = '0';
+          } else {
+            canvas.style.opacity = '1';
+            startLoop();
+            mobileTimer = setTimeout(function () {
+              stopLoop();
+              canvas.style.opacity = '0';
+            }, 3000);
+          }
+        });
+
+        return { stopLoop: stopLoop };
       }
 
+      var panels = [];
+
       // ── 1. NoNap — Sparks ──────────────────────────────
-      makePanel('panel-nonap', 'canvas-nonap', 28,
+      panels.push(makePanel('panel-nonap', 'canvas-nonap', 28,
         function spawn(cv) {
           return { x: rand(20, cv.width-20), y: cv.height+8,
             vx: rand(-0.5,0.5), vy: rand(-3.0,-4.5),
@@ -1478,10 +1543,10 @@
           ctx.fillRect(-w/2, -h/2, w, h);
           ctx.restore();
         }
-      );
+      ));
 
       // ── 2. Relief — Cotton puffs ────────────────────────
-      makePanel('panel-relief', 'canvas-relief', 20,
+      panels.push(makePanel('panel-relief', 'canvas-relief', 20,
         function spawn(cv) {
           return { x: rand(30, cv.width-30), y: cv.height+20,
             vy: rand(1.2,2.0), size: rand(14,30), life: 0, maxLife: rand(130,190),
@@ -1506,10 +1571,10 @@
           ctx.filter = 'none';
           ctx.restore();
         }
-      );
+      ));
 
       // ── 3. Power — Embers ───────────────────────────────
-      makePanel('panel-power', 'canvas-power', 30,
+      panels.push(makePanel('panel-power', 'canvas-power', 30,
         function spawn(cv) {
           return { x: rand(20, cv.width-20), y: cv.height+6,
             vx: rand(-0.5,0.5), vy: rand(-1.4,-2.4),
@@ -1535,10 +1600,10 @@
           ctx.fill();
           ctx.restore();
         }
-      );
+      ));
 
       // ── 4. Calm — Clover shapes ─────────────────────────
-      makePanel('panel-calm', 'canvas-calm', 22,
+      panels.push(makePanel('panel-calm', 'canvas-calm', 22,
         function spawn(cv) {
           return { x: rand(20, cv.width-20), y: cv.height+15,
             vx: rand(-0.4,0.4), vy: rand(-1.0,-1.8),
@@ -1567,7 +1632,19 @@
           ctx.fill();
           ctx.restore();
         }
-      );
+      ));
+
+      // ── IntersectionObserver — kill all loops when section leaves viewport ──
+      var spellsSection = document.getElementById('spells');
+      if (spellsSection && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+              panels.forEach(function (p) { p.stopLoop(); });
+            }
+          });
+        }, { threshold: 0.05 }).observe(spellsSection);
+      }
 
     }());
   </script>
