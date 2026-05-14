@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAGE Functional Chocolates — Cast Your Spell</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@1&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'night-bordeaux': '#410C17',
+            'black-cherry':   '#730314',
+            'deep-saffron':   '#FF9115',
+            'honey-bronze':   '#FFBD64',
+            'neon-pink':      '#F92445',
+            'vivid-royal':    '#0211A3',
+          },
+          fontFamily: {
+            lora:    ['Lora', 'Georgia', 'serif'],
+            satoshi: ['Satoshi', '-apple-system', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Satoshi', -apple-system, sans-serif;
+      background: #ffffff;
+      color: #1a0a0a;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Lora', Georgia, serif;
+    }
+
+    /* ── Splash ─────────────────────────────────────────── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      overflow: hidden;
+      background: #FFBD64;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #splash.hiding {
+      opacity: 0;
+      transform: scale(1.03);
+      pointer-events: none;
+    }
+
+    /* ── Lava-lamp blobs ─────────────────────────────────── */
+    /* blur() turns the hard circle into a soft organic blob.
+       Each blob has a unique closed path + duration so they
+       never sync — the interference creates the lava effect. */
+
+    .lava-blob {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    /* ── 6 warm saffron blobs + 2 dark bordeaux masses ────────────────────────── */
+    /* Warm blobs use a deeper saffron (rgba ~210,88,8) so they read against      */
+    /* the #FFBD64 base. Dark blobs anchor bottom-left and top-right.             */
+    /* Durations are all co-prime so no two blobs ever re-sync.                   */
+
+    /* ── Warm blobs ── */
+
+    #lava-a {
+      width: 55vw; height: 55vw;
+      top: 2%;  left: 3%;
+      background: radial-gradient(circle at center,
+        rgba(185,62,4,0.80)  0%,   /* ← WARM CORE ALPHA — raise to darken, lower to lighten */
+        rgba(185,62,4,0.30)  45%,
+        transparent           68%);
+      filter: blur(57px);          /* ← BLUR — lower = sharper/stronger, higher = softer/weaker */
+      animation: lavaA 11s ease-in-out infinite;
+    }
+    @keyframes lavaA {
+      0%   { transform: translate(0,   0)   scale(1);    opacity: 0.88; } /* ← ANIM OPACITY — overall pulse range */
+      26%  { transform: translate(20%, 14%) scale(1.18); opacity: 1;    }
+      54%  { transform: translate(26%, -4%) scale(0.90); opacity: 0.76; }
+      78%  { transform: translate(8%,  22%) scale(1.12); opacity: 0.94; }
+      100% { transform: translate(0,   0)   scale(1);    opacity: 0.88; }
+    }
+
+    #lava-b {
+      width: 48vw; height: 48vw;
+      top: 6%;  left: 38%;
+      background: radial-gradient(circle at center,
+        rgba(185,62,4,0.75)  0%,
+        rgba(185,62,4,0.28)  42%,
+        transparent           65%);
+      filter: blur(49px);
+      animation: lavaB 14s ease-in-out infinite;
+    }
+    @keyframes lavaB {
+      0%   { transform: translate(0,    0)    scale(1);    opacity: 0.84; }
+      30%  { transform: translate(-14%, 18%)  scale(1.20); opacity: 0.98; }
+      58%  { transform: translate(10%,  26%)  scale(0.86); opacity: 0.68; }
+      80%  { transform: translate(-6%,  10%)  scale(1.10); opacity: 0.88; }
+      100% { transform: translate(0,    0)    scale(1);    opacity: 0.84; }
+    }
+
+    #lava-c {
+      width: 52vw; height: 52vw;
+      top: 34%; left: 4%;
+      background: radial-gradient(circle at center,
+        rgba(185,62,4,0.78)  0%,
+        rgba(185,62,4,0.29)  44%,
+        transparent            66%);
+      filter: blur(53px);
+      animation: lavaC 17s ease-in-out infinite;
+    }
+    @keyframes lavaC {
+      0%   { transform: translate(0,    0)    scale(1);    opacity: 0.86; }
+      22%  { transform: translate(18%,  -16%) scale(1.16); opacity: 0.98; }
+      46%  { transform: translate(24%,  14%)  scale(0.88); opacity: 0.70; }
+      70%  { transform: translate(6%,   22%)  scale(1.14); opacity: 0.90; }
+      100% { transform: translate(0,    0)    scale(1);    opacity: 0.86; }
+    }
+
+    #lava-d {
+      width: 46vw; height: 46vw;
+      top: 32%; left: 52%;
+      background: radial-gradient(circle at center,
+        rgba(185,62,4,0.74)  0%,
+        rgba(185,62,4,0.27)  43%,
+        transparent           64%);
+      filter: blur(45px);
+      animation: lavaD 13s ease-in-out infinite;
+    }
+    @keyframes lavaD {
+      0%   { transform: translate(0,    0)    scale(1);    opacity: 0.82; }
+      24%  { transform: translate(-18%, -14%) scale(1.22); opacity: 0.96; }
+      50%  { transform: translate(-10%, 18%)  scale(0.84); opacity: 0.66; }
+      74%  { transform: translate(-22%, 6%)   scale(1.12); opacity: 0.88; }
+      100% { transform: translate(0,    0)    scale(1);    opacity: 0.82; }
+    }
+
+    #lava-e {
+      width: 50vw; height: 50vw;
+      top: 62%; left: 32%;
+      background: radial-gradient(circle at center,
+        rgba(185,62,4,0.78)  0%,
+        rgba(185,62,4,0.29)  44%,
+        transparent            66%);
+      filter: blur(51px);
+      animation: lavaE 19s ease-in-out infinite;
+    }
+    @keyframes lavaE {
+      0%   { transform: translate(0,   0)    scale(1);    opacity: 0.86; }
+      28%  { transform: translate(16%, -18%) scale(1.18); opacity: 1;    }
+      55%  { transform: translate(22%, -28%) scale(0.88); opacity: 0.72; }
+      78%  { transform: translate(6%,  -10%) scale(1.14); opacity: 0.92; }
+      100% { transform: translate(0,   0)    scale(1);    opacity: 0.86; }
+    }
+
+    #lava-f {
+      width: 44vw; height: 44vw;
+      top: 60%; left: 60%;
+      background: radial-gradient(circle at center,
+        rgba(185,62,4,0.76)  0%,
+        rgba(185,62,4,0.28)  42%,
+        transparent            64%);
+      filter: blur(47px);
+      animation: lavaF 16s ease-in-out infinite;
+    }
+    @keyframes lavaF {
+      0%   { transform: translate(0,    0)    scale(1);    opacity: 0.84; }
+      20%  { transform: translate(-20%, -12%) scale(1.20); opacity: 0.97; }
+      46%  { transform: translate(-28%, -22%) scale(0.86); opacity: 0.68; }
+      68%  { transform: translate(-10%, -14%) scale(1.16); opacity: 0.90; }
+      100% { transform: translate(0,    0)    scale(1);    opacity: 0.84; }
+    }
+
+    /* ── Dark bordeaux masses (2) ── */
+
+    #lava-g {
+      width: 60vw; height: 60vw;
+      top: 20%; left: 0%;
+      background: radial-gradient(circle at center,
+        rgba(65,12,23,0.22)  0%,   /* ← DARK CORE ALPHA — raise to darken, lower to lighten */
+        rgba(115,3,20,0.10) 38%,
+        transparent          66%);
+      filter: blur(110px);         /* ← BLUR — lower = sharper/stronger, higher = softer/weaker */
+      animation: lavaG 21s ease-in-out infinite;
+    }
+    @keyframes lavaG {
+      0%   { transform: translate(0,   0)    scale(1);    opacity: 0.38; } /* ← ANIM OPACITY */
+      28%  { transform: translate(24%, -20%) scale(1.22); opacity: 0.38; }
+      54%  { transform: translate(16%, -34%) scale(0.88); opacity: 0.28; }
+      78%  { transform: translate(8%,  -12%) scale(1.14); opacity: 0.33; }
+      100% { transform: translate(0,   0)    scale(1);    opacity: 0.38; }
+    }
+
+    #lava-h {
+      width: 54vw; height: 54vw;
+      top: 3%;  left: 58%;
+      background: radial-gradient(circle at center,
+        rgba(115,3,20,0.20)  0%,
+        rgba(65,12,23,0.09) 36%,
+        transparent          64%);
+      filter: blur(100px);
+      animation: lavaH 23s ease-in-out infinite;
+    }
+    @keyframes lavaH {
+      0%   { transform: translate(0,    0)    scale(1);    opacity: 0.36; }
+      22%  { transform: translate(-16%, 20%)  scale(1.18); opacity: 0.26; }
+      48%  { transform: translate(-24%, 32%)  scale(0.84); opacity: 0.38; }
+      74%  { transform: translate(-8%,  14%)  scale(1.12); opacity: 0.30; }
+      100% { transform: translate(0,    0)    scale(1);    opacity: 0.36; }
+    }
+
+    /* ── Static decorative orbs ── */
+    .splash-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #orb-1 { width: 10vw; height: 10vw; top: 12%; left: 22%;
+      background: radial-gradient(circle, rgba(185,62,4,0.12) 0%, transparent 70%);
+      filter: blur(8px); }
+
+    #orb-2 { width: 9vw; height: 9vw; top: 28%; left: 72%;
+      background: radial-gradient(circle, rgba(185,62,4,0.10) 0%, transparent 70%);
+      filter: blur(6px); }
+
+    #orb-3 { width: 11vw; height: 11vw; top: 55%; left: 18%;
+      background: radial-gradient(circle, rgba(185,62,4,0.11) 0%, transparent 70%);
+      filter: blur(9px); }
+
+    #orb-4 { width: 8vw; height: 8vw; top: 70%; left: 55%;
+      background: radial-gradient(circle, rgba(185,62,4,0.09) 0%, transparent 70%);
+      filter: blur(6px); }
+
+    #orb-5 { width: 10vw; height: 10vw; top: 18%; left: 85%;
+      background: radial-gradient(circle, rgba(185,62,4,0.10) 0%, transparent 70%);
+      filter: blur(7px); }
+
+    #orb-6 { width: 9vw; height: 9vw; top: 82%; left: 38%;
+      background: radial-gradient(circle, rgba(185,62,4,0.09) 0%, transparent 70%);
+      filter: blur(7px); }
+
+    /* Grain noise overlay */
+    #splash-grain {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Splash content wrapper */
+    #splash-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Splash footer frosted strip */
+    #splash-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: rgba(65,12,23,0.22);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 3;
+    }
+
+    /* Peeking mascot */
+    #splash-mascot {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: auto;
+      z-index: 4;
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(
+        ellipse 85% 90% at 50% 35%,
+        black 40%,
+        rgba(0,0,0,0.6) 62%,
+        transparent 85%
+      );
+      mask-image: radial-gradient(
+        ellipse 85% 90% at 50% 35%,
+        black 40%,
+        rgba(0,0,0,0.6) 62%,
+        transparent 85%
+      );
+      filter: blur(0.6px);
+      opacity: 0.92;
+    }
+
+    /* Tagline text */
+    #splash-tagline {
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-size: 20px;
+      font-weight: 500;
+      color: #410C17;
+      letter-spacing: 0.05em;
+      margin: 0 0 56px;
+    }
+
+    /* Elegant enter link */
+    .splash-enter {
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.20em;
+      color: #ffffff;
+      background: none;
+      border: none;
+      padding: 4px 0;
+      cursor: pointer;
+      display: inline-block;
+      opacity: 0.95;
+      text-decoration: none;
+      transition: opacity 0.25s ease, text-decoration-color 0.25s ease;
+    }
+    .splash-enter:hover {
+      opacity: 1;
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+    .splash-enter:focus-visible {
+      outline: 2px solid rgba(255,255,255,0.6);
+      outline-offset: 6px;
+      border-radius: 2px;
+    }
+
+    /* ── Main ───────────────────────────────────────────── */
+    #main {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #main.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Popup overlay ──────────────────────────────────── */
+    #popup-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(20, 4, 8, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    #popup-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #popup-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 48px 40px 40px;
+      width: min(460px, 100%);
+      position: relative;
+      transform: scale(0.94);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #popup-overlay.open #popup-card {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    /* ── Shared button ──────────────────────────────────── */
+    .btn-primary {
+      display: inline-block;
+      background: #410C17;
+      color: #ffffff;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.03em;
+      padding: 14px 36px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform  0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .btn-primary:hover  { background: #730314; transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:focus-visible { outline: 2px solid #410C17; outline-offset: 3px; }
+
+    /* ── Hero ghost button — overrides .btn-primary for hero CTA only ── */
+    .hero-bewitch {
+      background: transparent;
+      border: 2px solid #730314;
+      color: #730314;
+      font-size: 15px;
+      letter-spacing: 0.03em;
+      padding: 14px 48px;
+    }
+    .hero-bewitch:hover  { background: #730314; color: #ffffff; transform: translateY(-2px); }
+    .hero-bewitch:active { background: #410C17; color: #ffffff; transform: translateY(0); }
+
+    /* ── Form inputs ─────────────────────────────────────── */
+    .field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid #e8d8d8;
+      border-radius: 8px;
+      font-family: 'Satoshi', sans-serif;
+      font-size: 15px;
+      color: #2a1010;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .field:focus  { border-color: #410C17; }
+    .field::placeholder { color: #b09090; }
+
+    /* ── Section rhythm ─────────────────────────────────── */
+    .section { padding: 128px 24px; }
+
+    @media (max-width: 767px) {
+      .section { padding: 80px 20px; }
+    }
+
+    /* ── Spell panels ────────────────────────────────────── */
+    .spells-container {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      padding: 0 32px 48px 32px;
+      background: #ffffff;
+    }
+
+    .spell-panel {
+      flex: 1;
+      min-height: 680px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      border-radius: 20px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    .spell-header {
+      width: 100%;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      flex-shrink: 0;
+    }
+    .spell-header-name {
+      font-family: 'Lora', Georgia, serif;
+      font-weight: 700;
+      font-size: 26px;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+
+    .spell-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .spell-panel:hover .spell-canvas { opacity: 1; }
+
+    .spell-mascot {
+      width: 220px;
+      height: 220px;
+      object-fit: contain;
+      display: block;
+      margin: 24px auto 28px;
+      position: relative;
+      z-index: 1;
+      -webkit-mask-image: radial-gradient(
+        ellipse 80% 85% at 50% 50%,
+        black 40%,
+        rgba(0,0,0,0.7) 62%,
+        transparent 85%
+      );
+      mask-image: radial-gradient(
+        ellipse 80% 85% at 50% 50%,
+        black 40%,
+        rgba(0,0,0,0.7) 62%,
+        transparent 85%
+      );
+      filter: blur(0.4px);
+      opacity: 0.92;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  opacity  0.3s ease;
+    }
+    .spell-panel:hover .spell-mascot {
+      transform: translateY(-6px) scale(1.05);
+      opacity: 1;
+    }
+
+    .spell-tagline {
+      font-family: 'IM Fell English', Georgia, serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 22px;
+      padding: 8px 28px 0;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .spell-desc {
+      font-family: 'Satoshi', sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      color: #2a0a0f;
+      text-align: justify;
+      padding: 0 28px;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .spell-number {
+      position: absolute;
+      bottom: 16px;
+      right: 20px;
+      font-family: 'Lora', Georgia, serif;
+      font-weight: 700;
+      font-size: 130px;
+      line-height: 1;
+      opacity: 0.07;
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .spells-container  { flex-direction: column; gap: 16px; padding: 0 16px 40px 16px; }
+      .spell-panel       { min-height: auto; padding-bottom: 40px; }
+      .spell-canvas      { opacity: 1; }
+    }
+
+    /* ── Testimonial card ───────────────────────────────── */
+    .testi-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Close button ───────────────────────────────────── */
+    #popup-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 22px;
+      line-height: 1;
+      color: #b09090;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 4px;
+      transition: color 0.15s ease, opacity 0.15s ease;
+    }
+    #popup-close:hover       { color: #410C17; }
+    #popup-close:focus-visible { outline: 2px solid #410C17; outline-offset: 2px; }
+
+    /* ── Footer social links ─────────────────────────────── */
+    .footer-link {
+      font-family: 'Satoshi', sans-serif;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover { color: #FFBD64; text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ── Hero logo (centered) ───────────────────────────── */
+    #hero-logo {
+      width: 420px;
+      max-width: 90vw;
+      display: block;
+      object-fit: contain;
+      margin: 0 auto 16px;
+      /* transform/opacity driven by scroll JS — no CSS transition */
+    }
+    @media (max-width: 767px) {
+      #hero-logo { width: 260px; }
+    }
+
+    /* ── Hero tagline ────────────────────────────────────── */
+    .hero-tagline {
+      font-family: 'IM Fell English', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(28px, 3.5vw, 42px);
+      color: #730314;
+      letter-spacing: 0.03em;
+      text-align: center;
+      margin: 0 0 32px;
+    }
+
+    /* ── Hero mascot ─────────────────────────────────────── */
+    #hero-mascot {
+      width: 200px;
+      height: auto;
+      display: block;
+      margin: 0 auto 36px;
+      -webkit-mask-image: radial-gradient(
+        ellipse 80% 85% at 50% 50%,
+        black 35%,
+        rgba(0,0,0,0.7) 58%,
+        transparent 82%
+      );
+      mask-image: radial-gradient(
+        ellipse 80% 85% at 50% 50%,
+        black 35%,
+        rgba(0,0,0,0.7) 58%,
+        transparent 82%
+      );
+      filter: blur(0.4px);
+      opacity: 0.88;
+    }
+    @media (max-width: 767px) {
+      #hero-mascot { width: 140px; }
+    }
+
+    /* ── Inverted button (white bg, bordeaux text, saffron hover) ── */
+    .btn-inverted {
+      background: #ffffff;
+      color: #410C17;
+    }
+    .btn-inverted:hover  { background: #FF9115; color: #ffffff; }
+    .btn-inverted:active { transform: translateY(0); }
+
+    /* ── Nav logo ────────────────────────────────────────── */
+    #nav-logo {
+      width: 100px;
+      display: block;
+      opacity: 1;
+      object-fit: contain;
+    }
+
+    /* ── Why grid ────────────────────────────────────────── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px 64px;
+    }
+    @media (max-width: 700px) {
+      .why-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    /* ── Testi grid ──────────────────────────────────────── */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    @media (max-width: 768px) {
+      .testi-grid { grid-template-columns: 1fr; gap: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════════════
+       SPLASH SCREEN
+  ══════════════════════════════════════════════════════════ -->
+  <div id="splash" role="dialog" aria-label="Welcome to MAGE">
+
+    <!-- 6 warm saffron blobs + 2 dark bordeaux masses -->
+    <div id="lava-a" class="lava-blob" aria-hidden="true"></div>
+    <div id="lava-b" class="lava-blob" aria-hidden="true"></div>
+    <div id="lava-c" class="lava-blob" aria-hidden="true"></div>
+    <div id="lava-d" class="lava-blob" aria-hidden="true"></div>
+    <div id="lava-e" class="lava-blob" aria-hidden="true"></div>
+    <div id="lava-f" class="lava-blob" aria-hidden="true"></div>
+    <div id="lava-g" class="lava-blob" aria-hidden="true"></div>
+    <div id="lava-h" class="lava-blob" aria-hidden="true"></div>
+
+    <!-- Static decorative orbs -->
+    <div id="orb-1" class="splash-orb" aria-hidden="true"></div>
+    <div id="orb-2" class="splash-orb" aria-hidden="true"></div>
+    <div id="orb-3" class="splash-orb" aria-hidden="true"></div>
+    <div id="orb-4" class="splash-orb" aria-hidden="true"></div>
+    <div id="orb-5" class="splash-orb" aria-hidden="true"></div>
+    <div id="orb-6" class="splash-orb" aria-hidden="true"></div>
+
+    <!-- Grain / noise texture -->
+    <svg id="splash-grain" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <filter id="grain-noise" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="4" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+      </filter>
+      <rect width="100%" height="100%" filter="url(#grain-noise)"/>
+    </svg>
+
+    <!-- Composed content unit -->
+    <div id="splash-content">
+      <img
+        src="brand_assets/Brand logo_black.png"
+        alt="MAGE Functional Chocolates"
+        style="width: 200px; margin-bottom: 48px; display: block; filter: drop-shadow(0 0 24px rgba(255,255,255,0.90)) drop-shadow(0 0 60px rgba(255,255,255,0.45));"
+      />
+      <p id="splash-tagline">The Magic is Inside</p>
+      <button id="splash-enter" class="splash-enter">Enter</button>
+    </div>
+
+    <!-- Frosted footer strip -->
+    <div id="splash-footer" aria-hidden="true"></div>
+
+    <!-- Peeking mascot — renders above the footer strip -->
+    <img
+      id="splash-mascot"
+      src="brand_assets/Mascot_peaking.png"
+      alt="Mage mascot"
+    />
+
+  </div>
+
+
+  <!-- ── FIXED NAV — direct child of body, outside #main so #main opacity never clips it ── -->
+  <nav style="
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 24px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  ">
+    <img id="nav-logo" src="brand_assets/Band logo_red.png" alt="MAGE" />
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div id="main">
+
+    <!-- ── HERO ─────────────────────────────────────────── -->
+    <section id="hero" style="
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 60px;
+      position: relative;
+      background: radial-gradient(ellipse 60% 60% at 50% 40%, rgba(255,189,100,0.10) 0%, transparent 70%);
+    ">
+      <img
+        id="hero-logo"
+        src="brand_assets/Band logo_red.png"
+        alt="MAGE Functional Chocolates"
+      />
+      <p class="hero-tagline">Cast Your Spell.</p>
+      <img
+        id="hero-mascot"
+        src="brand_assets/Mascot_making chocolate.png"
+        alt=""
+        aria-hidden="true"
+      />
+      <button class="btn-primary bewitch-btn hero-bewitch">Bewitch Me</button>
+    </section>
+
+    <!-- ── ORIGIN STORY ──────────────────────────────────── -->
+    <section id="origin" style="background: #FDF8F2; padding: 120px 24px;">
+      <div style="max-width: 680px; margin: 0 auto;">
+
+        <h2 style="
+          font-family: 'Lora', Georgia, serif;
+          font-size: clamp(32px, 4vw, 48px);
+          font-weight: 700;
+          color: #410C17;
+          letter-spacing: -0.02em;
+          line-height: 1.15;
+          margin-bottom: 40px;
+        ">
+          3am. IIT KGP. Bad Decisions.</h2>
+
+        <p style="
+          font-family: 'Satoshi', sans-serif;
+          font-size: 17px;
+          line-height: 1.75;
+          color: #1a0a0f;
+          margin-bottom: 24px;
+          text-align: justify;
+        ">It was 3am on the IIT KGP campus. Everything was closed, deadline in six hours, and our only option was a vending machine energy drink that tasted like someone dissolved a candy bar in battery acid. We drank it. We regretted it.</p>
+
+        <p style="
+          font-family: 'Satoshi', sans-serif;
+          font-size: 17px;
+          line-height: 1.75;
+          color: #1a0a0f;
+          margin-bottom: 24px;
+          text-align: justify;
+        ">Staying awake felt like a punishment. I wanted a chocolate. And then we thought why not a chocolate</p>
+
+        <p style="
+          font-family: 'Satoshi', sans-serif;
+          font-size: 17px;
+          line-height: 1.75;
+          color: #1a0a0f;
+          margin-bottom: 0;
+          text-align: justify;
+        ">Not the kind you stress-eat before an exam and feel nothing. MAGE started as a single, stupid-simple idea - dark chocolate, Indian cacao, and a little bit of real function. One piece became a focus fix. Then a recovery tool. Then a sleep aid. Then something for the days your body just isn't cooperating. We call them spells. Because honestly, that's what they feel like. No powders. No pills. No routine you'll abandon by Thursday.</p>
+
+        <p style="
+          font-family: 'IM Fell English', Georgia, serif;
+          font-style: italic;
+          font-weight: 400;
+          font-size: clamp(26px, 3vw, 38px);
+          color: #730314;
+          letter-spacing: 0.03em;
+          text-align: center;
+          margin-top: 48px;
+          margin-bottom: 0;
+          line-height: 1.3;
+        ">Chocolates - with intention.</p>
+
+      </div>
+    </section>
+
+    <!-- ── FOUR SPELLS ───────────────────────────────────── -->
+    <section id="spells" style="background: #ffffff; padding-top: 100px;">
+
+      <h2 style="
+        font-family: 'Lora', Georgia, serif;
+        font-size: clamp(30px, 3.5vw, 44px);
+        font-weight: 700;
+        color: #410C17;
+        text-align: center;
+        margin-bottom: 60px;
+        padding: 0 24px;
+        letter-spacing: -0.02em;
+      ">Four Spells. One Mission.</h2>
+
+      <div class="spells-container">
+
+        <!-- 1 — NoNap -->
+        <div class="spell-panel" id="panel-nonap" style="background: rgba(255,145,21,0.06);">
+          <canvas class="spell-canvas" id="canvas-nonap"></canvas>
+          <div class="spell-header" style="background: #FF9115;">
+            <span class="spell-header-name">NoNap Spell</span>
+          </div>
+          <img src="brand_assets/Mascot_no nap spell.png" class="spell-mascot" alt="NoNap Spell mascot" />
+          <p class="spell-tagline" style="color: #FF9115;">Stay sharp. No crash.</p>
+          <p class="spell-desc">For back-to-back classes, late deadlines, and days that refuse to end. Focus without the jitter. Alertness without the crash that follows.</p>
+          <span class="spell-number" style="color: #FF9115;" aria-hidden="true">01</span>
+        </div>
+
+        <!-- 2 — Relief -->
+        <div class="spell-panel" id="panel-relief" style="background: rgba(249,36,69,0.06);">
+          <canvas class="spell-canvas" id="canvas-relief"></canvas>
+          <div class="spell-header" style="background: #F92445;">
+            <span class="spell-header-name">Relief Spell</span>
+          </div>
+          <img src="brand_assets/Mascot_relief spell.png" class="spell-mascot" alt="Relief Spell mascot" />
+          <p class="spell-tagline" style="color: #F92445;">Ease the day. Feel yourself.</p>
+          <p class="spell-desc">For the days your body works against you. Periods, PMS, PCOS - formulated to reduce discomfort and help.</p>
+          <span class="spell-number" style="color: #F92445;" aria-hidden="true">02</span>
+        </div>
+
+        <!-- 3 — Power -->
+        <div class="spell-panel" id="panel-power" style="background: rgba(115,3,20,0.06);">
+          <canvas class="spell-canvas" id="canvas-power"></canvas>
+          <div class="spell-header" style="background: #730314;">
+            <span class="spell-header-name">Power Spell</span>
+          </div>
+          <img src="brand_assets/Mascot_power spell.png" class="spell-mascot" alt="Power Spell mascot" />
+          <p class="spell-tagline" style="color: #730314;">Energy that earns it.</p>
+          <p class="spell-desc">Built for the training sessions, the early mornings, the second sets. Clean energy, better endurance. No synthetic rush - just performance.</p>
+          <span class="spell-number" style="color: #730314;" aria-hidden="true">03</span>
+        </div>
+
+        <!-- 4 — Calm -->
+        <div class="spell-panel" id="panel-calm" style="background: rgba(26,95,90,0.06);">
+          <canvas class="spell-canvas" id="canvas-calm"></canvas>
+          <div class="spell-header" style="background: #1a5f5a;">
+            <span class="spell-header-name">Calm Spell</span>
+          </div>
+          <img src="brand_assets/Mascot_calm spell.png" class="spell-mascot" alt="Calm Spell mascot" />
+          <p class="spell-tagline" style="color: #1a5f5a;">Wind down. Sleep deep.</p>
+          <p class="spell-desc">For the nights your mind won't stop. Quiets the noise, eases the tension, and gets you into the kind of rest that actually recovers you.</p>
+          <span class="spell-number" style="color: #1a5f5a;" aria-hidden="true">04</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── WHY CHOCOLATE ──────────────────────────────────── -->
+    <section id="why" style="background: #FAFAF8; padding: 120px 24px;">
+
+      <h2 style="
+        font-family: 'Lora', Georgia, serif;
+        font-size: clamp(32px, 4vw, 48px);
+        font-weight: 700;
+        color: #410C17;
+        text-align: center;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin-bottom: 56px;
+      ">Why Chocolate, Though?</h2>
+
+      <div style="max-width: 680px; margin: 0 auto; color: #1a0a0f;">
+
+        <p style="
+          font-family: 'Satoshi', sans-serif;
+          font-size: 17px;
+          line-height: 1.80;
+          color: #1a0a0f;
+          margin-bottom: 28px;
+        ">Nobody has ever said 'I can't wait to take my supplements.' Capsules are a commitment. Protein shakes are a whole thing. But chocolate? Chocolate just happens.</p>
+
+        <p style="
+          font-family: 'Satoshi', sans-serif;
+          font-size: 17px;
+          line-height: 1.80;
+          color: #1a0a0f;
+          margin-bottom: 28px;
+        ">Dark chocolate already does a lot on its own. It is genuinely good for your heart and has anti-inflammatory properties.</p>
+
+        <p style="
+          font-family: 'Satoshi', sans-serif;
+          font-size: 17px;
+          line-height: 1.80;
+          color: #1a0a0f;
+          margin-bottom: 0;
+        ">Each piece is 10–15g. Low sugar. It fits in your pocket, takes two seconds, and doesn't require a morning routine you'll abandon. That's kind of the whole point.</p>
+
+        <p style="
+          font-family: 'IM Fell English', Georgia, serif;
+          font-style: italic;
+          font-weight: 400;
+          font-size: clamp(24px, 2.8vw, 34px);
+          color: #730314;
+          text-align: center;
+          margin: 52px auto 0;
+          line-height: 1.35;
+        ">Not a supplement. Not a snack. Both.</p>
+
+      </div>
+    </section>
+
+    <!-- ── TESTIMONIALS ───────────────────────────────────── -->
+    <section id="early-voices" style="background: #FDF8F2; padding: 100px 60px;">
+
+      <h2 style="
+        font-family: 'Lora', Georgia, serif;
+        font-size: clamp(30px, 3.5vw, 48px);
+        font-weight: 700;
+        color: #410C17;
+        text-align: center;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin-bottom: 56px;
+      ">Early Voices</h2>
+
+      <div class="testi-grid">
+
+        <!-- Priya S. — NoNap — #FF9115 -->
+        <div class="testi-card" style="border-left: 4px solid #FF9115;">
+          <span style="
+            font-family: 'IM Fell English', Georgia, serif;
+            font-style: italic;
+            font-size: 56px;
+            line-height: 1;
+            color: #FF9115;
+            margin-bottom: 4px;
+            display: block;
+          ">&ldquo;</span>
+          <p style="
+            font-family: 'Satoshi', sans-serif;
+            font-size: 16px;
+            line-height: 1.75;
+            color: #1a0a0f;
+            flex-grow: 1;
+          ">Pulled an all-nighter for my end-sems and had two NoNap Spells. Usually I crash around 3am but stayed focused right through to submission. Didn't even feel the buzz — just… on.</p>
+          <div>
+            <p style="font-family: 'Satoshi', sans-serif; font-size: 15px; font-weight: 700; color: #1a0a0f; margin-bottom: 2px;">Priya S.</p>
+            <p style="font-family: 'Satoshi', sans-serif; font-size: 13px; color: #888;">3rd year, Chemical Engineering</p>
+            <span style="
+              display: inline-block;
+              margin-top: 8px;
+              padding: 3px 12px;
+              border-radius: 999px;
+              font-family: 'Satoshi', sans-serif;
+              font-size: 12px;
+              font-weight: 600;
+              letter-spacing: 0.06em;
+              background: rgba(255,145,21,0.12);
+              color: #FF9115;
+              border: 1px solid rgba(255,145,21,0.30);
+            ">NoNap Spell</span>
+          </div>
+        </div>
+
+        <!-- Arjun K. — Power — #730314 -->
+        <div class="testi-card" style="border-left: 4px solid #730314;">
+          <span style="
+            font-family: 'IM Fell English', Georgia, serif;
+            font-style: italic;
+            font-size: 56px;
+            line-height: 1;
+            color: #730314;
+            margin-bottom: 4px;
+            display: block;
+          ">&ldquo;</span>
+          <p style="
+            font-family: 'Satoshi', sans-serif;
+            font-size: 16px;
+            line-height: 1.75;
+            color: #1a0a0f;
+            flex-grow: 1;
+          ">I eat one before football practice. More stamina, none of that jittery pre-workout feeling. And it's chocolate, so it doesn't feel like I'm taking something.</p>
+          <div>
+            <p style="font-family: 'Satoshi', sans-serif; font-size: 15px; font-weight: 700; color: #1a0a0f; margin-bottom: 2px;">Arjun K.</p>
+            <p style="font-family: 'Satoshi', sans-serif; font-size: 13px; color: #888;">2nd year, Mechanical Engineering</p>
+            <span style="
+              display: inline-block;
+              margin-top: 8px;
+              padding: 3px 12px;
+              border-radius: 999px;
+              font-family: 'Satoshi', sans-serif;
+              font-size: 12px;
+              font-weight: 600;
+              letter-spacing: 0.06em;
+              background: rgba(115,3,20,0.12);
+              color: #730314;
+              border: 1px solid rgba(115,3,20,0.30);
+            ">Power Spell</span>
+          </div>
+        </div>
+
+        <!-- Sneha R. — NoNap — #FF9115 -->
+        <div class="testi-card" style="border-left: 4px solid #FF9115;">
+          <span style="
+            font-family: 'IM Fell English', Georgia, serif;
+            font-style: italic;
+            font-size: 56px;
+            line-height: 1;
+            color: #FF9115;
+            margin-bottom: 4px;
+            display: block;
+          ">&ldquo;</span>
+          <p style="
+            font-family: 'Satoshi', sans-serif;
+            font-size: 16px;
+            line-height: 1.75;
+            color: #1a0a0f;
+            flex-grow: 1;
+          ">I work from home and 3pm used to be a write-off. Had a NoNap Spell and that meeting I was dreading didn't drain me. Weird. I want more.</p>
+          <div>
+            <p style="font-family: 'Satoshi', sans-serif; font-size: 15px; font-weight: 700; color: #1a0a0f; margin-bottom: 2px;">Sneha R.</p>
+            <p style="font-family: 'Satoshi', sans-serif; font-size: 13px; color: #888;">UX Designer, WFH</p>
+            <span style="
+              display: inline-block;
+              margin-top: 8px;
+              padding: 3px 12px;
+              border-radius: 999px;
+              font-family: 'Satoshi', sans-serif;
+              font-size: 12px;
+              font-weight: 600;
+              letter-spacing: 0.06em;
+              background: rgba(255,145,21,0.12);
+              color: #FF9115;
+              border: 1px solid rgba(255,145,21,0.30);
+            ">NoNap Spell</span>
+          </div>
+        </div>
+
+        <!-- Riya M. — Relief — #F92445 -->
+        <div class="testi-card" style="border-left: 4px solid #F92445;">
+          <span style="
+            font-family: 'IM Fell English', Georgia, serif;
+            font-style: italic;
+            font-size: 56px;
+            line-height: 1;
+            color: #F92445;
+            margin-bottom: 4px;
+            display: block;
+          ">&ldquo;</span>
+          <p style="
+            font-family: 'Satoshi', sans-serif;
+            font-size: 16px;
+            line-height: 1.75;
+            color: #1a0a0f;
+            flex-grow: 1;
+          ">First day of my cycle I'm usually in bed with a hot water bottle. Tried Relief Spell — I actually sat through a 2-hour review meeting. That's saying something.</p>
+          <div>
+            <p style="font-family: 'Satoshi', sans-serif; font-size: 15px; font-weight: 700; color: #1a0a0f; margin-bottom: 2px;">Riya M.</p>
+            <p style="font-family: 'Satoshi', sans-serif; font-size: 13px; color: #888;">Product Manager, Bangalore</p>
+            <span style="
+              display: inline-block;
+              margin-top: 8px;
+              padding: 3px 12px;
+              border-radius: 999px;
+              font-family: 'Satoshi', sans-serif;
+              font-size: 12px;
+              font-weight: 600;
+              letter-spacing: 0.06em;
+              background: rgba(249,36,69,0.12);
+              color: #F92445;
+              border: 1px solid rgba(249,36,69,0.30);
+            ">Relief Spell</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── FINAL CTA ───────────────────────────────────────── -->
+    <section id="final-cta" class="section" style="text-align: center; padding-top: 168px; padding-bottom: 168px; background: #410C17;">
+      <h2 style="
+        font-size: clamp(32px, 4.5vw, 56px);
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        margin-bottom: 18px;
+      ">Your Spell<br>is Brewing.</h2>
+      <p style="
+        font-family: 'Satoshi', sans-serif;
+        font-size: 18px;
+        color: rgba(255,255,255,0.70);
+        margin-bottom: 52px;
+        font-weight: 400;
+      ">Join the list. Get first batch discount.</p>
+      <button class="btn-primary btn-inverted bewitch-btn">Bewitch Me</button>
+    </section>
+
+    <!-- ── FOOTER ─────────────────────────────────────────── -->
+    <footer style="background: #410C17; padding: 72px 24px; text-align: center;">
+      <img
+        src="brand_assets/Brand logo_white.png"
+        alt="MAGE Functional Chocolates"
+        style="width: 140px; margin-bottom: 28px; opacity: 0.92; display: block; margin-left: auto; margin-right: auto;"
+      />
+      <p style="
+        font-family: 'Lora', Georgia, serif;
+        font-style: italic;
+        font-size: 17px;
+        color: #FFBD64;
+        margin-bottom: 36px;
+        letter-spacing: 0.01em;
+      ">Cast Your Spell.</p>
+      <div style="display: flex; gap: 36px; justify-content: center; margin-bottom: 36px; flex-wrap: wrap;">
+        <a href="https://www.instagram.com/mage_chocolates/" target="_blank" rel="noopener noreferrer" class="footer-link">@mage_chocolates</a>
+        <a href="https://www.linkedin.com/company/magechocolates/" target="_blank" rel="noopener noreferrer" class="footer-link">LinkedIn</a>
+      </div>
+      <p style="
+        font-family: 'Satoshi', sans-serif;
+        font-size: 12px;
+        color: rgba(255,255,255,0.35);
+        letter-spacing: 0.04em;
+      ">© 2026 MAGE Functional Chocolates</p>
+    </footer>
+
+  </div><!-- /#main -->
+
+
+  <!-- ══════════════════════════════════════════════════════
+       EMAIL CAPTURE POPUP
+  ══════════════════════════════════════════════════════════ -->
+  <div id="popup-overlay" role="dialog" aria-modal="true" aria-label="Join the MAGE waitlist">
+    <div id="popup-card">
+      <button id="popup-close" aria-label="Close">&times;</button>
+      <div id="popup-content">
+        <h3 style="
+          font-size: 26px;
+          font-weight: 700;
+          color: #410C17;
+          letter-spacing: -0.02em;
+          margin-bottom: 8px;
+          line-height: 1.25;
+        ">Join the first batch.</h3>
+        <p style="
+          font-family: 'Satoshi', sans-serif;
+          font-size: 15px;
+          color: #8a6060;
+          margin-bottom: 36px;
+          line-height: 1.6;
+        ">Be first to know when MAGE launches — and claim your first batch discount.</p>
+        <form id="popup-form" novalidate>
+          <div style="margin-bottom: 14px;">
+            <input
+              id="field-name"
+              type="text"
+              class="field"
+              placeholder="Your name"
+              autocomplete="name"
+              required
+            />
+          </div>
+          <div style="margin-bottom: 28px;">
+            <input
+              id="field-email"
+              type="email"
+              class="field"
+              placeholder="Your email"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; text-align: center;">Bewitch Me</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // ─── Conversion tracking ──────────────────────────────
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzpnoMGCduzpxx-uMlTaNGIwUVIA6i_9hGmH2kKn0J3do1_W1bkI8Rz_jkDSZUrA2gw/exec";
+
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0;
+        var v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+    var sessionId = sessionStorage.getItem('mage_sid');
+    if (!sessionId) {
+      sessionId = generateUUID();
+      sessionStorage.setItem('mage_sid', sessionId);
+    }
+
+    function trackEvent(payload) {
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Object.assign({ session_id: sessionId, timestamp: new Date().toISOString() }, payload))
+      }).catch(function(e) { console.warn("Track failed:", e); });
+    }
+
+    // ─── Splash ───────────────────────────────────────────
+    const splash      = document.getElementById('splash');
+    const main        = document.getElementById('main');
+    const splashEnter = document.getElementById('splash-enter');
+
+    splashEnter.addEventListener('click', () => {
+      trackEvent({ event: 'splash_enter' });
+      splash.classList.add('hiding');
+      setTimeout(() => {
+        splash.style.display = 'none';
+        main.classList.add('visible');
+      }, 600);
+    });
+
+    // ─── Popup ────────────────────────────────────────────
+    const overlay     = document.getElementById('popup-overlay');
+    const popupClose  = document.getElementById('popup-close');
+    const popupForm   = document.getElementById('popup-form');
+    const popupContent = document.getElementById('popup-content');
+
+    function openPopup() {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('field-name').focus();
+    }
+
+    function closePopup() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.bewitch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        trackEvent({ event: 'intent_click' });
+        openPopup();
+      });
+    });
+
+    popupClose.addEventListener('click', closePopup);
+
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) closePopup();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closePopup();
+    });
+
+    // ─── Form submit ──────────────────────────────────────
+    popupForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name  = document.getElementById('field-name').value.trim();
+      const email = document.getElementById('field-email').value.trim();
+      if (!name || !email) return;
+
+      trackEvent({ event: 'conversion', name: name, email: email });
+
+      popupContent.innerHTML = `
+        <div style="text-align: center; padding: 32px 0 16px;">
+          <p style="
+            font-family: 'Lora', Georgia, serif;
+            font-style: italic;
+            font-size: 22px;
+            font-weight: 500;
+            color: #410C17;
+            line-height: 1.6;
+          ">Consider yourself enchanted —<br>we'll be in touch.</p>
+        </div>
+      `;
+
+      setTimeout(closePopup, 3200);
+    });
+
+    // ─── Fixed nav: appears when hero leaves viewport ─────
+    (function () {
+      const nav  = document.querySelector('nav') || document.querySelector('header');
+      const hero = document.getElementById('hero');
+
+      if (!nav || !hero) return;
+
+      nav.style.opacity       = '0';
+      nav.style.pointerEvents = 'none';
+      nav.style.transition    = 'opacity 0.5s ease';
+      nav.style.position      = 'fixed';
+      nav.style.top           = '0';
+      nav.style.left          = '0';
+      nav.style.right         = '0';
+      nav.style.zIndex        = '50';
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) {
+            nav.style.opacity       = '1';
+            nav.style.pointerEvents = 'auto';
+          } else {
+            nav.style.opacity       = '0';
+            nav.style.pointerEvents = 'none';
+          }
+        });
+      }, { threshold: 0.15 });
+
+      observer.observe(hero);
+    }());
+
+    // ─── Spell panel canvas animations ────────────────────
+    (function () {
+      function rand(lo, hi) { return lo + Math.random() * (hi - lo); }
+      function getAlpha(t, max) {
+        if (t < 0.25) return (t / 0.25) * max;
+        if (t > 0.75) return ((1 - t) / 0.25) * max;
+        return max;
+      }
+      var isMobile = function () { return window.innerWidth <= 768; };
+
+      // Generic panel factory
+      function makePanel(panelId, canvasId, MAX, spawnFn, updateFn, drawFn) {
+        var panel  = document.getElementById(panelId);
+        var canvas = document.getElementById(canvasId);
+        if (!panel || !canvas) return;
+        var ctx = canvas.getContext('2d');
+        var particles = [], running = false, isHovered = false;
+
+        function resize() {
+          canvas.width  = panel.offsetWidth;
+          canvas.height = panel.offsetHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function loop() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          if (isHovered && particles.length < MAX) {
+            particles.push(spawnFn(canvas));
+          }
+          var alive = [];
+          for (var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+            p.life++;
+            updateFn(p);
+            if (p.life < p.maxLife) {
+              drawFn(ctx, p);
+              alive.push(p);
+            }
+          }
+          particles = alive;
+          if (!isHovered && particles.length === 0) { running = false; return; }
+          requestAnimationFrame(loop);
+        }
+
+        function start() { if (!running) { running = true; loop(); } }
+
+        if (isMobile()) { isHovered = true; start(); return; }
+        panel.addEventListener('mouseenter', function () { isHovered = true; start(); });
+        panel.addEventListener('mouseleave', function () { isHovered = false; });
+      }
+
+      // ── 1. NoNap — Sparks ──────────────────────────────
+      makePanel('panel-nonap', 'canvas-nonap', 28,
+        function spawn(cv) {
+          return { x: rand(20, cv.width-20), y: cv.height+8,
+            vx: rand(-0.5,0.5), vy: rand(-3.0,-4.5),
+            size: rand(6,13), life: 0, maxLife: rand(90,145),
+            angle: rand(0,Math.PI), wPhase: rand(0,Math.PI*2) };
+        },
+        function update(p) {
+          p.x += p.vx + Math.sin(p.wPhase + p.life * 0.08) * 0.35;
+          p.y += p.vy;
+          p.angle += 0.04;
+        },
+        function draw(ctx, p) {
+          var a = getAlpha(p.life / p.maxLife, 0.55);
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.angle);
+          ctx.globalAlpha = a;
+          ctx.fillStyle = '#FF9115';
+          var w = p.size, h = p.size * 0.14;
+          ctx.fillRect(-w/2, -h/2, w, h);
+          ctx.rotate(Math.PI/2);
+          ctx.fillRect(-w/2, -h/2, w, h);
+          ctx.restore();
+        }
+      );
+
+      // ── 2. Relief — Cotton puffs ────────────────────────
+      makePanel('panel-relief', 'canvas-relief', 20,
+        function spawn(cv) {
+          return { x: rand(30, cv.width-30), y: cv.height+20,
+            vy: rand(1.2,2.0), size: rand(14,30), life: 0, maxLife: rand(130,190),
+            swayAmp: rand(0.5,1.1), swayPhase: rand(0,Math.PI*2) };
+        },
+        function update(p) {
+          p.x += Math.sin(p.swayPhase + p.life * 0.04) * p.swayAmp;
+          p.y -= p.vy;
+        },
+        function draw(ctx, p) {
+          var a = getAlpha(p.life / p.maxLife, 0.35);
+          ctx.save();
+          ctx.filter = 'blur(6px)';
+          ctx.globalAlpha = a;
+          ctx.fillStyle = '#F92445';
+          var offs = [[0,0],[p.size*0.35,-p.size*0.2],[-p.size*0.3,-p.size*0.25]];
+          for (var i = 0; i < offs.length; i++) {
+            ctx.beginPath();
+            ctx.arc(p.x+offs[i][0], p.y+offs[i][1], p.size*0.55, 0, Math.PI*2);
+            ctx.fill();
+          }
+          ctx.filter = 'none';
+          ctx.restore();
+        }
+      );
+
+      // ── 3. Power — Embers ───────────────────────────────
+      makePanel('panel-power', 'canvas-power', 30,
+        function spawn(cv) {
+          return { x: rand(20, cv.width-20), y: cv.height+6,
+            vx: rand(-0.5,0.5), vy: rand(-1.4,-2.4),
+            size: rand(4,10), life: 0, maxLife: rand(110,165),
+            pulse: rand(0,Math.PI*2) };
+        },
+        function update(p) {
+          p.x += p.vx;
+          p.y += p.vy;
+        },
+        function draw(ctx, p) {
+          var a = getAlpha(p.life / p.maxLife, 0.65);
+          var r = p.size * (1 + 0.3 * Math.sin(p.pulse + p.life * 0.12));
+          var g = ctx.createRadialGradient(p.x,p.y,0, p.x,p.y,r);
+          g.addColorStop(0,   'rgba(255,100,60,1)');
+          g.addColorStop(0.5, 'rgba(115,3,20,0.8)');
+          g.addColorStop(1,   'transparent');
+          ctx.save();
+          ctx.globalAlpha = a;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+          ctx.fillStyle = g;
+          ctx.fill();
+          ctx.restore();
+        }
+      );
+
+      // ── 4. Calm — Clover shapes ─────────────────────────
+      makePanel('panel-calm', 'canvas-calm', 22,
+        function spawn(cv) {
+          return { x: rand(20, cv.width-20), y: cv.height+15,
+            vx: rand(-0.4,0.4), vy: rand(-1.0,-1.8),
+            size: rand(10,20), life: 0, maxLife: rand(150,220),
+            rot: rand(0,Math.PI*2), rotSpeed: rand(-0.018,0.018) };
+        },
+        function update(p) {
+          p.x   += p.vx;
+          p.y   += p.vy;
+          p.rot += p.rotSpeed;
+        },
+        function draw(ctx, p) {
+          var a  = getAlpha(p.life / p.maxLife, 0.42);
+          var pr = p.size * 0.38;
+          var pd = p.size * 0.28;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.globalAlpha = a;
+          ctx.fillStyle = '#1a5f5a';
+          ctx.beginPath();
+          for (var i = 0; i < 4; i++) {
+            var ang = (i * Math.PI) / 2;
+            ctx.arc(pd*Math.cos(ang), pd*Math.sin(ang), pr, 0, Math.PI*2);
+          }
+          ctx.fill();
+          ctx.restore();
+        }
+      );
+
+    }());
+  </script>
+
+</body>
+</html>
