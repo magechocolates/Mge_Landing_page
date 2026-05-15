@@ -594,7 +594,7 @@
       background: #ffffff;
       border-radius: 16px;
       padding: 32px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 6px rgba(65,12,23,0.05);
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -744,6 +744,95 @@
         animation-duration: 0.01ms !important;
       }
     }
+
+    /* ── Hero hex decoratives (caffeine molecule motif) ──── */
+    .hero-hex {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.07;
+    }
+
+    /* ── Origin: dark chocolate section ─────────────────── */
+    #origin {
+      position: relative;
+      overflow: hidden;
+    }
+    .origin-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: min(240px, 26vw);
+      color: #FFBD64;
+      opacity: 0.055;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      z-index: 0;
+    }
+
+    /* ── Why: Honey Bronze section ──────────────────────── */
+    #why {
+      position: relative;
+      overflow: hidden;
+    }
+    .why-hex {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.08;
+    }
+
+    /* ── Final CTA watermark ────────────────────────────── */
+    .cta-watermark {
+      position: absolute;
+      bottom: -20px;
+      right: -30px;
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: min(200px, 22vw);
+      color: #FFBD64;
+      opacity: 0.07;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    /* ── Scroll reveal ──────────────────────────────────── */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .reveal-on-scroll.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Testimonials mobile padding fix ────────────────── */
+    @media (max-width: 767px) {
+      #early-voices { padding-left: 20px !important; padding-right: 20px !important; }
+    }
+
+    /* ── Hero chocolate mockup decoratives ──────────────── */
+    .hero-choc-deco {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+      object-fit: contain;
+    }
+    @media (max-width: 767px) {
+      .hero-choc-deco { opacity: 0.18 !important; }
+      .hero-choc-hide-mobile { display: none !important; }
+    }
   </style>
 </head>
 
@@ -834,32 +923,55 @@
       text-align: center;
       padding: 80px 24px 60px;
       position: relative;
-      background: radial-gradient(ellipse 60% 60% at 50% 40%, rgba(255,189,100,0.10) 0%, transparent 70%);
+      overflow: hidden;
+      isolation: isolate;
+      background: #FFFBF4;
+      background-image: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(255,189,100,0.28) 0%, transparent 62%), radial-gradient(ellipse 40% 40% at 12% 85%, rgba(255,145,21,0.08) 0%, transparent 60%);
     ">
+      <!-- Chocolate mockup — 5 pieces scattered across the hero background -->
+      <!-- A: top-right, largest — MAGE engraving clearly legible -->
+      <img class="hero-choc-deco" aria-hidden="true" src="brand_assets/chocolate_mockup.png"
+           style="top:-15px;right:-25px;width:200px;transform:rotate(22deg);opacity:0.38;mix-blend-mode:multiply;filter:sepia(0.2) saturate(1.4);" />
+      <!-- B: bottom-left, large, flipped -->
+      <img class="hero-choc-deco" aria-hidden="true" src="brand_assets/chocolate_mockup.png"
+           style="bottom:-20px;left:-35px;width:175px;transform:scale(-1,1) rotate(-28deg);opacity:0.36;mix-blend-mode:multiply;filter:sepia(0.2) saturate(1.4);" />
+      <!-- C: right edge mid-height, flipped — desktop only -->
+      <img class="hero-choc-deco hero-choc-hide-mobile" aria-hidden="true" src="brand_assets/chocolate_mockup.png"
+           style="top:48%;right:-18px;width:148px;transform:scale(-1,1) rotate(-20deg);opacity:0.33;mix-blend-mode:multiply;filter:sepia(0.2) saturate(1.4);" />
+      <!-- D: top-left, small — desktop only -->
+      <img class="hero-choc-deco hero-choc-hide-mobile" aria-hidden="true" src="brand_assets/chocolate_mockup.png"
+           style="top:5%;left:4%;width:112px;transform:rotate(33deg);opacity:0.31;mix-blend-mode:multiply;filter:sepia(0.2) saturate(1.4);" />
+      <!-- E: lower-right, smallest — desktop only -->
+      <img class="hero-choc-deco hero-choc-hide-mobile" aria-hidden="true" src="brand_assets/chocolate_mockup.png"
+           style="bottom:12%;right:4%;width:90px;transform:rotate(-35deg);opacity:0.30;mix-blend-mode:multiply;filter:sepia(0.2) saturate(1.4);" />
+      <!-- Content — each element explicitly above the absolute mockups -->
       <img
         id="hero-logo"
         src="brand_assets/Band logo_red.png"
         alt="MAGE Functional Chocolates"
+        style="position:relative;z-index:1;"
       />
-      <p class="hero-tagline">Cast Your Spell.</p>
+      <p class="hero-tagline" style="position:relative;z-index:1;">Cast Your Spell.</p>
       <img
         id="hero-mascot"
         src="brand_assets/Mascot_making chocolate.png"
         alt=""
         aria-hidden="true"
+        style="position:relative;z-index:1;"
       />
-      <button class="btn-primary bewitch-btn hero-bewitch">Bewitch Me</button>
+      <button class="btn-primary bewitch-btn hero-bewitch" style="position:relative;z-index:1;">Bewitch Me</button>
     </section>
 
     <!-- ── ORIGIN STORY ──────────────────────────────────── -->
-    <section id="origin" style="background: #FDF8F2; padding: 120px 24px;">
-      <div style="max-width: 680px; margin: 0 auto;">
+    <section id="origin" style="background: #410C17; padding: 120px 24px;">
 
-        <h2 style="
+      <div style="max-width: 680px; margin: 0 auto; position: relative; z-index: 1;">
+
+        <h2 class="reveal-on-scroll" style="
           font-family: 'Lora', Georgia, serif;
           font-size: clamp(32px, 4vw, 48px);
           font-weight: 700;
-          color: #410C17;
+          color: #FFBD64;
           letter-spacing: -0.02em;
           line-height: 1.15;
           margin-bottom: 40px;
@@ -870,7 +982,7 @@
           font-family: 'Satoshi', sans-serif;
           font-size: 17px;
           line-height: 1.75;
-          color: #1a0a0f;
+          color: rgba(255,253,248,0.85);
           margin-bottom: 24px;
           text-align: justify;
         ">It was 3am on the IIT KGP campus. Everything was closed, deadline in six hours, and our only option was a vending machine energy drink that tasted like someone dissolved a candy bar in battery acid. We drank it. We regretted it.</p>
@@ -879,7 +991,7 @@
           font-family: 'Satoshi', sans-serif;
           font-size: 17px;
           line-height: 1.75;
-          color: #1a0a0f;
+          color: rgba(255,253,248,0.85);
           margin-bottom: 24px;
           text-align: justify;
         ">Staying awake felt like a punishment. I wanted a chocolate. And then we thought why not a chocolate</p>
@@ -888,7 +1000,7 @@
           font-family: 'Satoshi', sans-serif;
           font-size: 17px;
           line-height: 1.75;
-          color: #1a0a0f;
+          color: rgba(255,253,248,0.85);
           margin-bottom: 0;
           text-align: justify;
         ">Not the kind you stress-eat before an exam and feel nothing. MAGE started as a single, stupid-simple idea - dark chocolate, Indian cacao, and a little bit of real function. One piece became a focus fix. Then a recovery tool. Then a sleep aid. Then something for the days your body just isn't cooperating. We call them spells. Because honestly, that's what they feel like. No powders. No pills. No routine you'll abandon by Thursday.</p>
@@ -898,7 +1010,7 @@
           font-style: italic;
           font-weight: 400;
           font-size: clamp(26px, 3vw, 38px);
-          color: #730314;
+          color: #FF9115;
           letter-spacing: 0.03em;
           text-align: center;
           margin-top: 48px;
@@ -977,9 +1089,16 @@
     </section>
 
     <!-- ── WHY CHOCOLATE ──────────────────────────────────── -->
-    <section id="why" style="background: #FAFAF8; padding: 120px 24px;">
+    <section id="why" style="background: #FFBD64; padding: 120px 24px; isolation: isolate;">
+      <!-- Chocolate bars — bottom-left, bottom-right, top-right -->
+      <img aria-hidden="true" src="brand_assets/chocolate_mockup.png"
+           style="position:absolute;bottom:-55px;left:-70px;width:300px;transform:rotate(-16deg);opacity:0.27;mix-blend-mode:multiply;filter:sepia(0.2) saturate(1.4);pointer-events:none;" />
+      <img aria-hidden="true" src="brand_assets/chocolate_mockup.png"
+           style="position:absolute;bottom:-55px;right:-70px;width:300px;transform:rotate(16deg);opacity:0.27;mix-blend-mode:multiply;filter:sepia(0.2) saturate(1.4);pointer-events:none;" />
+      <img aria-hidden="true" src="brand_assets/chocolate_mockup.png"
+           style="position:absolute;top:-42px;right:-65px;width:240px;transform:scale(-1,1) rotate(-26deg);opacity:0.25;mix-blend-mode:multiply;filter:sepia(0.2) saturate(1.4);pointer-events:none;" />
 
-      <h2 style="
+      <h2 class="reveal-on-scroll" style="
         font-family: 'Lora', Georgia, serif;
         font-size: clamp(32px, 4vw, 48px);
         font-weight: 700;
@@ -988,9 +1107,10 @@
         letter-spacing: -0.02em;
         line-height: 1.2;
         margin-bottom: 56px;
+        position: relative; z-index: 1;
       ">Why Chocolate, Though?</h2>
 
-      <div style="max-width: 680px; margin: 0 auto; color: #1a0a0f;">
+      <div style="max-width: 680px; margin: 0 auto; color: #1a0a0f; position: relative; z-index: 1;">
 
         <p style="
           font-family: 'Satoshi', sans-serif;
@@ -1021,7 +1141,7 @@
           font-style: italic;
           font-weight: 400;
           font-size: clamp(24px, 2.8vw, 34px);
-          color: #730314;
+          color: #410C17;
           text-align: center;
           margin: 52px auto 0;
           line-height: 1.35;
@@ -1033,7 +1153,7 @@
     <!-- ── TESTIMONIALS ───────────────────────────────────── -->
     <section id="early-voices" style="background: #FDF8F2; padding: 100px 60px;">
 
-      <h2 style="
+      <h2 class="reveal-on-scroll" style="
         font-family: 'Lora', Georgia, serif;
         font-size: clamp(30px, 3.5vw, 48px);
         font-weight: 700;
@@ -1047,7 +1167,7 @@
       <div class="testi-grid">
 
         <!-- Priya S. — NoNap — #FF9115 -->
-        <div class="testi-card" style="border-left: 4px solid #FF9115;">
+        <div class="testi-card" style="border-top: 4px solid #FF9115;">
           <span style="
             font-family: 'IM Fell English', Georgia, serif;
             font-style: italic;
@@ -1084,7 +1204,7 @@
         </div>
 
         <!-- Arjun K. — Power — #730314 -->
-        <div class="testi-card" style="border-left: 4px solid #730314;">
+        <div class="testi-card" style="border-top: 4px solid #730314;">
           <span style="
             font-family: 'IM Fell English', Georgia, serif;
             font-style: italic;
@@ -1121,7 +1241,7 @@
         </div>
 
         <!-- Sneha R. — NoNap — #FF9115 -->
-        <div class="testi-card" style="border-left: 4px solid #FF9115;">
+        <div class="testi-card" style="border-top: 4px solid #FF9115;">
           <span style="
             font-family: 'IM Fell English', Georgia, serif;
             font-style: italic;
@@ -1158,7 +1278,7 @@
         </div>
 
         <!-- Riya M. — Relief — #F92445 -->
-        <div class="testi-card" style="border-left: 4px solid #F92445;">
+        <div class="testi-card" style="border-top: 4px solid #F92445;">
           <span style="
             font-family: 'IM Fell English', Georgia, serif;
             font-style: italic;
@@ -1198,23 +1318,26 @@
     </section>
 
     <!-- ── FINAL CTA ───────────────────────────────────────── -->
-    <section id="final-cta" class="section" style="text-align: center; padding-top: 168px; padding-bottom: 64px; background: #410C17;">
-      <h2 style="
-        font-size: clamp(32px, 4.5vw, 56px);
-        font-weight: 700;
-        color: #ffffff;
-        letter-spacing: -0.03em;
-        line-height: 1.15;
-        margin-bottom: 18px;
-      ">Your Spell<br>is Brewing.</h2>
-      <p style="
-        font-family: 'Satoshi', sans-serif;
-        font-size: 18px;
-        color: rgba(255,255,255,0.70);
-        margin-bottom: 52px;
-        font-weight: 400;
-      ">Join the list. Get first batch discount.</p>
-      <button class="btn-primary btn-inverted bewitch-btn">Bewitch Me</button>
+    <section id="final-cta" class="section" style="text-align: center; padding-top: 168px; padding-bottom: 64px; background: #410C17; position: relative; overflow: hidden;">
+
+      <div style="position: relative; z-index: 1;">
+        <h2 class="reveal-on-scroll" style="
+          font-size: clamp(32px, 4.5vw, 56px);
+          font-weight: 700;
+          color: #ffffff;
+          letter-spacing: -0.03em;
+          line-height: 1.15;
+          margin-bottom: 18px;
+        ">Your Spell<br>is Brewing.</h2>
+        <p style="
+          font-family: 'Satoshi', sans-serif;
+          font-size: 18px;
+          color: rgba(255,255,255,0.70);
+          margin-bottom: 52px;
+          font-weight: 400;
+        ">Join the list. Get first batch discount.</p>
+        <button class="btn-primary btn-inverted bewitch-btn">Bewitch Me</button>
+      </div>
     </section>
 
     <!-- ── FOOTER ─────────────────────────────────────────── -->
@@ -1646,6 +1769,24 @@
         }, { threshold: 0.05 }).observe(spellsSection);
       }
 
+    }());
+
+    // ─── Scroll reveal ─────────────────────────────────────
+    (function () {
+      var reveals = document.querySelectorAll('.reveal-on-scroll');
+      if (!('IntersectionObserver' in window)) {
+        reveals.forEach(function (el) { el.classList.add('revealed'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(function (el) { obs.observe(el); });
     }());
   </script>
 
